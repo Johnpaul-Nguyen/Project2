@@ -58,11 +58,12 @@ void Chip::display() const{ // Chat const after display()
         string in2;
         bool none = false;
 
-        if (input2 == NULL){
+        if (input2 == NULL){ // Check to see if chip has a second input
             in2 = "None";
             none = true;
         }
-        
+
+        // Display chip info of chiptype, id, inputchip1 info, inputchip2 info, and outputchip info
         if (none){
             cout << chipType << id << "Input 1 = " << input1->getType() << input1->getId() << ", Input 2 = " << in2 << ", Output = " << output->getType() << output->getId() << endl;
         }
