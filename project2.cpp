@@ -52,7 +52,6 @@ void Chip::display() const{ // Chat const after display() // Chat: Make sure you
     switch (chipType)
     {
     case 'I':
-        cout << "Case 'I'" << endl;
         if (output == NULL){
             cout << "Output is none" << endl;
         }
@@ -62,7 +61,6 @@ void Chip::display() const{ // Chat const after display() // Chat: Make sure you
         
         break;
     case 'O':
-        cout << "Case 'O'" << endl;
         if (input1 == NULL){
             cout << chipType << id << ", Input is none" << endl;
         }
@@ -73,9 +71,9 @@ void Chip::display() const{ // Chat const after display() // Chat: Make sure you
         
         break;
     default:
-        cout << "Default Case" << endl;
         string in1;
         string in2;
+        // If input 1 or 2 are Null, set bool values to true
         bool none1 = (input1 == NULL);
         bool none2 = (input2 == NULL);
 
@@ -133,7 +131,7 @@ int main(){
         //read the chip ID based on the first letter to determine its type
         string input;
         cin >> input;
-        
+
         char chipType = input.at(0);
         string chipId = input.substr(1, input.size());
         //create the chip object and initialize it appropriately
@@ -175,9 +173,7 @@ int main(){
         switch (command.at(0))
         {
         case 'I':
-            cout << "Case I" << endl;
             cin >> firstInput >> secondInputInt;
-            cout << "First Input: " << firstInput << ", Value of input: " << secondInputInt << endl;
 
             for (int j = 0; j < numChips; j++){
                 if (allChips[j][0].getType() == firstInput.at(0) && allChips[j][0].getId() == firstInput.substr(1, firstInput.size())){
@@ -188,7 +184,6 @@ int main(){
             break;
 
         case 'O':
-            cout << "Case O" << endl;
             cin >> firstInput;
 
             int outIndex;
@@ -204,8 +199,6 @@ int main(){
             break;
 
         default:
-            cout << "Default Case" << endl;
-
             cin >> firstInput >> secondInput;
 
             for (int j = 0; j < numChips; j++){
@@ -242,8 +235,6 @@ int main(){
     //for each component created call the display () method
     
     for (int i = 0; i < numChips; i++){
-        cout << "Iteration of displaying: " << i << endl;
-        
         allChips[i]->display();
     }
     
