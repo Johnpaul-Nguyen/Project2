@@ -19,7 +19,7 @@ class Chip {
         void setInput1(Chip* inputChip); // Sets the first input chip
         void setInput2(Chip* inputChip); // second input chip (can be NULL)
         void setOutput(Chip* outputChip); // Sets the output chip (can be NULL)
-        void setInputValue(int value); // Sets the inputValue of input chips
+        void setInputValue(double value); // Sets the inputValue of input chips DOUBLE
         void compute(); // Performs the operation based on the chip type
         
         void display() const; // Displays the chip's information
@@ -30,7 +30,7 @@ class Chip {
         char getType(); // Returns chip type
         Chip* getInput1();
         Chip* getInput2();
-        int getInputValue(); // Returns input value
+        double getInputValue(); // Returns input value
         ~Chip();
 
 //****** OTHER METHODS AS NECESSARY ************//
@@ -42,13 +42,148 @@ Chip::Chip(Chip* chip):chipType(chip->chipType), id(chip->id), input1(chip->inpu
 void Chip::setInput1(Chip* inputChip){ input1 = inputChip; }
 void Chip::setInput2(Chip* inputChip){ input2 = inputChip; }
 void Chip::setOutput(Chip* outputChip){ output = outputChip; }
-void Chip::setInputValue(int value){ inputValue = value; }
-void Chip::compute(){
+void Chip::setInputValue(double value){ inputValue = value; }
 
+void Chip::compute(){    
+    bool in1Type = false;
+    bool in2Type = false;
+
+    if (input2 == NULL){
+        in1Type = (input1->getType() == 'I');
+    }
+    else{
+        in1Type = (input1->getType() == 'I');
+        in2Type = (input2->getType() == 'I');
+    }
+
+    switch (chipType)
+    {
+    case 'O': // Output Chip
+        input1->compute();
+        cout << "The output value of this circuit is " << inputValue << endl;
+        break;
+
+    case 'A': // Addition Chip
+
+        if (in1Type && in2Type){
+            setInputValue(input1->getInputValue() + input2->getInputValue());
+        }
+        else if (in1Type){
+            input2->compute();
+            setInputValue(input1->getInputValue() + input2->getInputValue());
+        }
+        else if (in2Type){
+            input1->compute();
+            setInputValue(input1->getInputValue() + input2->getInputValue());
+        }
+        else{
+            input1->compute();
+            input2->compute();
+            setInputValue(input1->getInputValue() + input2->getInputValue());
+        }
+
+        if (output->getType() == 'O'){
+            output->setInputValue(inputValue);
+        }
+        break;
+
+    case 'S': // Subtraction Chip
+
+        if (in1Type && in2Type){
+            setInputValue(input1->getInputValue() - input2->getInputValue());
+        }
+        else if (in1Type){
+            input2->compute();
+            setInputValue(input1->getInputValue() - input2->getInputValue());
+        }
+        else if (in2Type){
+            input1->compute();
+            setInputValue(input1->getInputValue() - input2->getInputValue());
+        }
+        else{
+            input1->compute();
+            input2->compute();
+            setInputValue(input1->getInputValue() - input2->getInputValue());
+        }
+
+        if (output->getType() == 'O'){
+            output->setInputValue(inputValue);
+        }
+        break;
+
+    case 'M': // Multiplication Chip
+
+        if (in1Type && in2Type){
+            setInputValue(input1->getInputValue() * input2->getInputValue());
+        }
+        else if (in1Type){
+            input2->compute();
+            setInputValue(input1->getInputValue() * input2->getInputValue());
+        }
+        else if (in2Type){
+            input1->compute();
+            setInputValue(input1->getInputValue() * input2->getInputValue());
+        }
+        else{
+            input1->compute();
+            input2->compute();
+            setInputValue(input1->getInputValue() * input2->getInputValue());
+        }
+
+        if (output->getType() == 'O'){
+            output->setInputValue(inputValue);
+        }
+        break;
+
+    case 'D': // Division Chip
+        if (input2->getInputValue() != 0){
+            if (in1Type && in2Type){
+                setInputValue(input1->getInputValue() / input2->getInputValue());
+            }
+            else if (in1Type){
+                input2->compute();
+                setInputValue(input1->getInputValue() / input2->getInputValue());
+            }
+            else if (in2Type){
+                input1->compute();
+                setInputValue(input1->getInputValue() / input2->getInputValue());
+                
+            }
+            else{
+                input1->compute();
+                input2->compute();
+                setInputValue(input1->getInputValue() / input2->getInputValue());
+            }
+        }
+        else{
+            cout << "Can't divide by 0" << endl;
+        }
+
+        if (output->getType() == 'O'){
+            output->setInputValue(inputValue);
+        }
+        break;
+
+    case 'N': // Not Chip
+        if (in1Type){
+            setInputValue(-1 * (input1->getInputValue()));
+        }
+        else{
+            input1->compute();
+            setInputValue(-1 * (input1->getInputValue()));
+        }
+
+        if (output->getType() == 'O'){
+            output->setInputValue(inputValue);
+        }
+        break;
+
+    default: // case 'I'. Does nothing since previous chips take input values from their corresponding input chips
+        break;
+    }
 }
 
 void Chip::display() const{ // Chat const after display() // Chat: Make sure you are not displaying null pointers
-    cout << "Start of Display function" << endl;
     switch (chipType)
     {
     case 'I':
@@ -58,8 +193,8 @@ void Chip::display() const{ // Chat const after display() // Chat: Make sure you
         else{
             cout << chipType << id << ", Output = " << output->getType() << output->getId() << endl;
         }
-        
         break;
+
     case 'O':
         if (input1 == NULL){
             cout << chipType << id << ", Input is none" << endl;
@@ -67,9 +202,8 @@ void Chip::display() const{ // Chat const after display() // Chat: Make sure you
         else{
             cout << chipType << id << ", Input 1 = " << input1->getType() << input1->getId() << endl;
         }
-
-        
         break;
+
     default:
         string in1;
         string in2;
@@ -108,7 +242,7 @@ void Chip::display() const{ // Chat const after display() // Chat: Make sure you
 
 string Chip::getId() const{ return id; }// Chat fix id error: identifier "id" is undefined
 char Chip::getType(){ return chipType; }
-int Chip::getInputValue(){ return inputValue; }
+double Chip::getInputValue(){ return inputValue; }
 Chip* Chip::getInput1(){ return input1; }
 Chip* Chip::getInput2(){ return input2; }
 
@@ -141,10 +275,6 @@ int main(){
         allChips[i] = chip;
     }
 
-    for (int i = 0; i < numChips; i++){
-        cout << "Chip type: " << allChips[i][0].getType() << ", Chip id: " << allChips[i][0].getId() << endl;
-    }
-
     cin >> numCommands;
 
     for (int i = 0; i < numCommands; i++) {
@@ -158,9 +288,7 @@ int main(){
         string command;
         string firstInput;
         string secondInput;
-        int secondInputInt;
-        Chip* firstChip;
-        Chip* secondChip;
+        double secondInputDouble;
         int firstChipIndex = 0;
         int secondChipIndex = 0;
         
@@ -173,14 +301,13 @@ int main(){
         switch (command.at(0))
         {
         case 'I':
-            cin >> firstInput >> secondInputInt;
+            cin >> firstInput >> secondInputDouble;
 
             for (int j = 0; j < numChips; j++){
                 if (allChips[j][0].getType() == firstInput.at(0) && allChips[j][0].getId() == firstInput.substr(1, firstInput.size())){
-                    allChips[j][0].setInputValue(secondInputInt);
+                    allChips[j][0].setInputValue(secondInputDouble);
                 }
             }
-
             break;
 
         case 'O':
@@ -193,21 +320,17 @@ int main(){
                     break;
                 }
             }
-           
-            // allChips[outIndex][0].compute();
-            //cout << "Output value of the circuit is: " << allChips[outIndex][0].getInputValue() << endl;
+            allChips[outIndex][0].compute();
             break;
 
-        default:
+        default: // Command 'A'. No other commands
             cin >> firstInput >> secondInput;
 
             for (int j = 0; j < numChips; j++){
                 if (allChips[j][0].getType() == firstInput.at(0) && allChips[j][0].getId() == firstInput.substr(1, firstInput.size())){
-                    firstChip = allChips[j];
                     firstChipIndex = j;
                 }
                 if (allChips[j][0].getType() == secondInput.at(0) && allChips[j][0].getId() == secondInput.substr(1, secondInput.size())){
-                    secondChip = allChips[j];
                     secondChipIndex = j;
                 }
                 
@@ -225,7 +348,6 @@ int main(){
             }
 
             allChips[firstChipIndex][0].setOutput(allChips[secondChipIndex]);
-
             break;
         }
     }
@@ -233,7 +355,6 @@ int main(){
     
     cout << "***** Showing the connections that were established" << endl;
     //for each component created call the display () method
-    
     for (int i = 0; i < numChips; i++){
         allChips[i]->display();
     }
