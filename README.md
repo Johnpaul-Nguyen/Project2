@@ -28,6 +28,7 @@ Finally, the output from the subtraction chip S130 is connected to the input of 
 labeled O50. This output chip, O50, receives and prints the final computed value from the sequence
 of operations. For instance, if the final value is 42.0, it would display: “I am output chip number 50,
 and the value I received is 42.0.”
+
 In summary, the configuration of these chips allows a series of arithmetic operations to be
 performed in sequence, where each chip's output is passed as an input to the next chip in the chain.
 The entire process culminates in the output chip, which displays the final result of the computations.
